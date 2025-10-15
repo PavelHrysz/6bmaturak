@@ -1,51 +1,96 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Registrace vstupenek</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+label { display: block; margin-top: 10px; font-weight: bold; }
+input, select, button { width: 100%; padding: 8px; margin-top: 4px; }
+#qr { text-align: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+<h1>Registrace vstupenek</h1>
+
+<form id="ticketForm">
+  <label>Jméno a příjmení:</label>
+  <input type="text" name="name" required>
+
+  <label>Stav:</label>
+  <select name="status">
+    <option value="nezaplaceno">Nezaplaceno</option>
+    <option value="zaplaceno">Zaplaceno</option>
+  </select>
+
+  <label>Stání (300 Kč):</label>
+  <input type="number" name="stani" min="0" value="0">
+
+  <label>Sezení (350 Kč):</label>
+  <input type="number" name="sezeni" min="0" value="0">
+
+  <label>After party (150 Kč):</label>
+  <input type="number" name="afterparty" min="0" value="0">
+
+  <button type="submit">Odeslat</button>
+</form>
+
+<div id="result"></div>
+<div id="qr"></div>
+
 <script>
-const FORM = document.getElementById('ticketForm');
+document.addEventListener('DOMContentLoaded', () => {
+  const FORM = document.getElementById('ticketForm');
 
-FORM.addEventListener('submit', async (e) => {
-  // Zabrání standardnímu odeslání (GET a reload stránky)
-  e.preventDefault();
+  FORM.addEventListener('submit', async (e) => {
+    e.preventDefault(); // zablokuje klasický GET
 
-  // Získání hodnot z formuláře
-  const name = FORM.name.value.trim();
-  const status = FORM.status.value;
-  const tickets = {
-    "stání": parseInt(FORM.stani.value) || 0,
-    "sezení": parseInt(FORM.sezeni.value) || 0,
-    "after party": parseInt(FORM.afterparty.value) || 0
-  };
+    // Získání hodnot
+    const name = FORM.name.value.trim();
+    const status = FORM.status.value;
+    const tickets = {
+      "stání": parseInt(FORM.stani.value) || 0,
+      "sezení": parseInt(FORM.sezeni.value) || 0,
+      "after party": parseInt(FORM.afterparty.value) || 0
+    };
 
-  // Výpočet ceny
-  const PRICES = { "stání": 300, "sezení": 350, "after party": 150 };
-  let total = 0;
-  let ticketText = [];
-  for (let type in tickets) {
-    if (tickets[type] > 0) {
-      total += tickets[type] * PRICES[type];
-      ticketText.push(`${tickets[type]}x ${type}`);
+    // Výpočet ceny
+    const PRICES = { "stání": 300, "sezení": 350, "after party": 150 };
+    let total = 0;
+    let ticketText = [];
+    for (let type in tickets) {
+      if (tickets[type] > 0) {
+        total += tickets[type] * PRICES[type];
+        ticketText.push(`${tickets[type]}x ${type}`);
+      }
     }
-  }
 
-  // Zobrazení souhrnu
-  document.getElementById('result').innerHTML = `
-    <h3>✅ Úspěšně vyplněno!</h3>
-    <p><strong>Jméno:</strong> ${name}</p>
-    <p><strong>Stav:</strong> ${status}</p>
-    <p><strong>Vstupenky:</strong> ${ticketText.join(', ')}</p>
-    <p><strong>Celková cena:</strong> ${total} Kč</p>
-  `;
+    // Zobrazení souhrnu
+    document.getElementById('result').innerHTML = `
+      <h3>✅ Úspěšně vyplněno!</h3>
+      <p><strong>Jméno:</strong> ${name}</p>
+      <p><strong>Stav:</strong> ${status}</p>
+      <p><strong>Vstupenky:</strong> ${ticketText.join(', ')}</p>
+      <p><strong>Celková cena:</strong> ${total} Kč</p>
+    `;
 
-  // QR kód
-  const qrDiv = document.getElementById('qr');
-  qrDiv.innerHTML = "";
-  new QRCode(qrDiv, `${total} Kč – ${name}`);
+    // QR kód
+    const qrDiv = document.getElementById('qr');
+    qrDiv.innerHTML = "";
+    new QRCode(qrDiv, `${total} Kč – ${name}`);
 
-  // Odeslání do Google Sheets
-  fetch("https://script.google.com/macros/s/AKfycbyucqiP6rIpd6QynhHaj6P3sNwV_tSB_bZCavmlEIfDsuybtGDzdYH7y-7KqlV2sxeupQ/exec", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, status, tickets })
-  })
-  .then(() => console.log("Data odeslána"))
-  .catch(err => console.error("Chyba při odeslání:", err));
+    // Odeslání do Google Sheets
+    fetch("https://script.google.com/macros/s/AKfycbyucqiP6rIpd6QynhHaj6P3sNwV_tSB_bZCavmlEIfDsuybtGDzdYH7y-7KqlV2sxeupQ/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, status, tickets })
+    })
+    .then(() => console.log("Data odeslána"))
+    .catch(err => console.error("Chyba při odeslání:", err));
+  });
 });
 </script>
+
+</body>
+</html>
