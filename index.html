@@ -80,7 +80,7 @@ FORM.addEventListener('submit', async (e) => {
   new QRCode(qrDiv, `Platba ${total} Kč pro ${name}`);
 
   // Odeslání dat do Google Sheets
-  fetch("https://script.google.com/macros/s/AKfycbwmcBX9CyXVUITpd6PcD-B0zYjLVh2vFxa85IxHg0dCemb7apWi8EDjXPo9tKXkfxVgbg/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbyucqiP6rIpd6QynhHaj6P3sNwV_tSB_bZCavmlEIfDsuybtGDzdYH7y-7KqlV2sxeupQ/exec", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -98,6 +98,7 @@ FORM.addEventListener('submit', async (e) => {
 
 </body>
 </html>
+
 
 
 
