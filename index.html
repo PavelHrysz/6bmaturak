@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new QRCode(qrDiv, `${total} Kč – ${name}`);
 
     // Odeslání do Google Sheets
-    fetch("https://script.google.com/macros/s/AKfycbyucqiP6rIpd6QynhHaj6P3sNwV_tSB_bZCavmlEIfDsuybtGDzdYH7y-7KqlV2sxeupQ/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbwZNHRBTCQxvaLKYi2VxCdlGwwSblGURKYpTRZw9gfIMG-wiR1dzpnXmG6t6uAfqWvVFw/exec", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, status, tickets })
@@ -94,3 +94,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
