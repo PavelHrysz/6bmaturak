@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <title>Registrace vstupenek</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select, button { width: 100%; padding: 8px; margin-top: 4px; }
-    #qr { text-align: center; margin-top: 20px; }
-  </style>
+<meta charset="UTF-8">
+<title>Registrace vstupenek</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 1rem; }
+label { display: block; margin-top: 10px; font-weight: bold; }
+input, select, button { width: 100%; padding: 8px; margin-top: 4px; }
+#qr { text-align: center; margin-top: 20px; }
+</style>
 </head>
 <body>
-  <h1>Registrace vstupenek</h1>
-  <form id="ticketForm">
-    <label>Jméno a příjmení:</label>
-    <input type="text" name="name" required>
+<h1>Registrace vstupenek</h1>
 
-    <label>Stav:</label>
-    <select name="status">
-      <option value="nezaplaceno">Nezaplaceno</option>
-      <option value="zaplaceno">Zaplaceno</option>
-    </select>
+<form id="ticketForm">
+  <label>Jméno a příjmení:</label>
+  <input type="text" name="name" required>
 
-    <label>Stání (300 Kč):</label>
-    <input type="number" name="stani" min="0" value="0">
+  <label>Stav:</label>
+  <select name="status">
+    <option value="nezaplaceno">Nezaplaceno</option>
+    <option value="zaplaceno">Zaplaceno</option>
+  </select>
 
-    <label>Sezení (350 Kč):</label>
-    <input type="number" name="sezeni" min="0" value="0">
+  <label>Stání (300 Kč):</label>
+  <input type="number" name="stani" min="0" value="0">
 
-    <label>After party (150 Kč):</label>
-    <input type="number" name="afterparty" min="0" value="0">
+  <label>Sezení (350 Kč):</label>
+  <input type="number" name="sezeni" min="0" value="0">
 
-    <button type="submit">Odeslat</button>
-  </form>
+  <label>After party (150 Kč):</label>
+  <input type="number" name="afterparty" min="0" value="0">
 
-  <div id="result"></div>
-  <div id="qr"></div>
+  <button type="submit">Odeslat</button>
+</form>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<div id="result"></div>
+<div id="qr"></div>
 
 <script>
 const FORM = document.getElementById('ticketForm');
+
 FORM.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Získání hodnot z formuláře
+  // Získání hodnot
   const name = FORM.name.value.trim();
   const status = FORM.status.value;
   const tickets = {
@@ -74,36 +74,20 @@ FORM.addEventListener('submit', async (e) => {
     <p><strong>Celková cena:</strong> ${total} Kč</p>
   `;
 
-  // QR kód
+  // QR kód (jen krátký text, aby se vešel)
   const qrDiv = document.getElementById('qr');
   qrDiv.innerHTML = "";
-  new QRCode(qrDiv, `Platba ${total} Kč pro ${name}`);
+  new QRCode(qrDiv, `${total} Kč – ${name}`);
 
-  // Odeslání dat do Google Sheets
+  // Odeslání do Google Sheets
   fetch("https://script.google.com/macros/s/AKfycbyucqiP6rIpd6QynhHaj6P3sNwV_tSB_bZCavmlEIfDsuybtGDzdYH7y-7KqlV2sxeupQ/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    name: name,
-    status: status,
-    tickets: tickets
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, status, tickets })
   })
-})
-.catch(err => console.error("Chyba při odeslání:", err));
-
-
-    // Nepotřebujeme CORS, protože nepotřebujeme odpověď
-  });
+  .catch(err => console.error("Chyba při odeslání:", err));
+});
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
