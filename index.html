@@ -83,8 +83,14 @@ FORM.addEventListener('submit', async (e) => {
   fetch("https://script.google.com/macros/s/AKfycbwmcBX9CyXVUITpd6PcD-B0zYjLVh2vFxa85IxHg0dCemb7apWi8EDjXPo9tKXkfxVgbg/exec", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name, status, tickets })
-});
+  body: JSON.stringify({
+    name: name,
+    status: status,
+    tickets: tickets
+  })
+})
+.catch(err => console.error("Chyba při odeslání:", err));
+
 
     // Nepotřebujeme CORS, protože nepotřebujeme odpověď
   });
@@ -93,6 +99,7 @@ FORM.addEventListener('submit', async (e) => {
 
 </body>
 </html>
+
 
 
 
